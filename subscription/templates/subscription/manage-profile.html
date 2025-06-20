@@ -1,0 +1,15 @@
+<!-- templates/manage_profile.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Manage Profile</title>
+</head>
+<body>
+  <h2>Update Profile</h2>
+  <form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+   <a href="{% url 'subscription:manage_profile' %}"> <button type="submit">Save Changes</button></a>
+  </form>
+</body>
+</html>

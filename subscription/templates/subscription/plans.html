@@ -1,0 +1,51 @@
+<!-- templates/dashboard.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Amazing Plans!!!</title>
+</head>
+<body>
+  <h2>Welcome {{ request.user.username }}</h2> <!--displaying username logged in-->
+
+  <h3>Available Service Plans</h3>
+  <ul>
+    {% for plan in plans %} <!--listing all the plans added from the backend-->
+      <li>
+        <strong>{{ plan.name }}</strong><br>
+        Duration: {{ plan.duration_hours }} hours<br>
+        Bandwidth: {{ plan.bandwidth_limit_mb }} MB<br>
+        Price: KES {{ plan.price }}<br>
+        <p>{{ plan.description }}</p>
+      </li>
+      <!--adding subscribe button to the plans-->
+    {% if request.user.subscriberprofile.plan == plan %}
+        <em>You are currently subscribed to this plan.</em>
+      {% else %}
+        <form method="post" action="{% url 'subscription:subscribe_to_plan' plan.id %}">
+          {% csrf_token %}
+          <button type="submit", style="background-color: aqua;">Subscribe</button>
+        </form>
+      {% endif %}
+    
+
+
+    {% empty %}
+      <p>No plans available at the moment.</p>
+    {% endfor %}
+
+    <h4>Current Plan:</h4>
+    {% if request.user.subscriberprofile.plan %}
+      <p><strong>{{ request.user.subscriberprofile.plan.name }}</strong></p>
+      <p>Activated: {{ request.user.subscriberprofile.plan_activated|date:"Y-m-d H:i" }}</p>
+      <p>Expires: {{ request.user.subscriberprofile.plan_expires|date:"Y-m-d H:i" }}</p>
+      {% if request.user.subscriberprofile.plan_expires < now %}
+        <p style="color: red;"><strong>Your plan has expired.</strong></p>
+      % else %}
+        <p style="color: green;"><strong>Plan is active</strong></p>
+      {% endif %}
+    {% else %}
+      <p>You are not subscribed to any plan.</p>
+    {% endif %}
+  </ul>
+</body>
+</html>
