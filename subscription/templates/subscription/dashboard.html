@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -38,7 +39,7 @@
     <div class="collapse navbar-collapse" id="myNavbar">
       <ul class="nav navbar-nav">
         <li class="active"><a href="#">Empire network</a></li>
-        <li><a href="#">profile</a></li>
+        <li><a href="{% url 'subscription:view_profile %'}">profile</a></li>
         <li><a href="{% url 'subscription:plans' %}">plans</a></li>
         <li><a href="{% url 'subscription:logout' %}">Logout</a></li>
         <li><a href="#">connect</a></li>
@@ -53,9 +54,15 @@
       <h2>Logo</h2>
       <ul class="nav nav-pills nav-stacked">
         <li class="active"><a href="{% url 'subscription:plans' %}">Empire</a></li>
-        <li><a href="{% url 'subscription:manage_profile' %}">profile</a></li>
+        <li class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">Profile
+          <ul>          
+            <li><a class="dropdown-item" href="{% url 'subscription:manage_profile' %}">my profile</a></li>
+            <li><a class="dropdown-item" href="{% url 'subscription:view-profile' %}">manage profile</a></li>
+            <li><a class="dropdown-item" href="{% url 'subscription:logout' %}">Log out</a></li>
+          </ul>
+        </li>
         <li><a href="{% url 'subscription:plans' %}">plans</a></li>
-        <li><a href="#section3">speed</a></li>
+        <li><a href="{% url 'subscription:available_networks' %}">speed</a></li>
         
       </ul><br>
     </div>

@@ -18,11 +18,9 @@ from django.contrib import admin
 from django.urls import path, include
 from mpesa.urls import mpesa_urls
 from mpesa import views as mpesa_views
-from django.conf import settings
-from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('subscription.urls', namespace='subscription')),
     path('mpesa/', include(mpesa_urls)),
     
-]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]

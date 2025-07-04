@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from .forms import UserRegistrationForm, ProfileUpdateForm
 from django.contrib.auth.models import User
-from .models import SubscriberProfile
+from .models import SubscriberProfile, Payment
 from django.contrib.auth import login
 from .models import*
 from django.shortcuts import get_object_or_404, redirect
@@ -14,7 +14,15 @@ from mpesa import Auth, STKPush
 from django.views.decorators.http import require_POST
 from decouple import config
 from django.http import JsonResponse
+from .utils import scan_networks, connect_to_network
+from mpesa.urls import mpesa_urls
+from mpesa import*
+from django.urls import reverse
+import requests
 
+
+def welcome(request):
+    return render(request, 'subscription/welcome.html')
 
 @require_POST
 def initiate_stk(request):
@@ -63,44 +71,43 @@ def plans(request):
 
 @login_required
 def subscribe_to_plan(request, plan_id):
-    plan = get_object_or_404(ServicePlan, id=plan_id)
+    plan = ServicePlan.objects.get(pk=plan_id)
     profile = request.user.subscriberprofile
-    profile.activate_plan(plan)
-    return redirect('dashboard')
-
-#payment component of the application
-
-
+    phone = request.user.subscriberprofile.phone_number
+    
+    stk_endpoint = request.build_absolute_uri(reverse('submit'))
+    resp = requests.post(stk_endpoint, data={
+        'amount': plan.price,
+        'phone_number': request.user.subscriberprofile.phone_number,
+        'account_number': f"Plan-{plan.id}",
+    })
+    return redirect('subscribe_success', plan_id=plan.id)
+@login_required
+def subscribe_success(request, plan_id):
+    plan = ServicePlan.objects.get(pk=plan_id)
+    return render(request, 'subscription/subscribe_success.html', {
+        'plan': plan,
+        'message': "STK Push sent! Check your phone to complete payment."
+    })
+# views.py
 def register(request):
     if request.method == 'POST':
-        form = UserRegistrationForm(request.POST)
+        form = UserRegistrationForm(request.POST, request.FILES)
         if form.is_valid():
-            user = User.objects.create_user(
-                username=form.cleaned_data['username'],
-                email=form.cleaned_data['email'],
-                password=form.cleaned_data['password'],
-                
-            )
-
-        
-        # Save profile manually
-            
-            profile = user.subscriberprofile
-            profile.mac_address = form.cleaned_data['mac_address']
-            profile.ip_address = form.cleaned_data['ip_address']
-            profile.save()
-            login(request, user)  # Optional auto-login
-            return redirect('dashboard')  # Change to your landing view
+            user = form.save()
+            login(request, user)
+            return redirect('dashboard')
     else:
         form = UserRegistrationForm()
     return render(request, 'subscription/register.html', {'form': form})
+
 
 
 @login_required
 def manage_profile(request):
     profile = request.user.subscriberprofile
     if request.method == 'POST':
-        form = ProfileUpdateForm(request.POST, instance=profile, user=request.user)
+        form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user.subscriberprofile)
         if form.is_valid():
             form.save()
             return redirect('manage_profile')
@@ -109,5 +116,25 @@ def manage_profile(request):
             'email': request.user.email,
             'first_name': request.user.first_name,
             'last_name': request.user.last_name,
+            
         }, user=request.user)
     return render(request, 'subscription/manage-profile.html', {'form': form})
+@login_required
+def profile_view(request):
+    profile = request.user.subscriberprofile
+    return render(request, "subscription/profile.html", {"profile": profile})
+
+
+def available_networks(request):
+    if request.method == 'POST':
+        ssid = request.POST['ssid']
+        password = request.POST.get('password','')
+        success = connect_to_network(ssid, password)
+        return render(request, 'subscription/networks_list.html', {
+            'networks': scan_networks(),
+            'message': f"Connected to {ssid}" if success else f"Failed to connect to {ssid}"
+        })
+    return render(request, 'subscription/networks_list.html', {
+        'networks': scan_networks()
+    
+    })

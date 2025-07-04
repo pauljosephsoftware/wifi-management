@@ -1,0 +1,29 @@
+
+{% block content %}
+  <h2>Available Wi‑Fi Networks</h2>
+  {% if message %}
+    <div class="alert alert-info">{{ message }}</div>
+  {% endif %}
+  <table class="table">
+    <thead><tr><th>#</th><th>SSID</th><th>Signal</th><th>Action</th></tr></thead>
+    <tbody>
+      {% for net in networks %}
+      <tr>
+        <td>{{ forloop.counter }}</td>
+        <td>{{ net.ssid }}</td>
+        <td>{{ net.signal }} dBm</td>
+        <td>
+          <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="ssid" value="{{ net.ssid }}">
+            <input name="password" placeholder="Password">
+            <button class="btn btn-sm" href="{% url 'subscription:networks' %}">Connect</button>
+          </form>
+        </td>
+      </tr>
+      {% empty %}
+        <tr><td colspan="4">No networks found</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

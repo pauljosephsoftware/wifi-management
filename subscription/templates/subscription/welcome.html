@@ -1,0 +1,38 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Landing page</title>
+  <style>
+    .root{
+        background-color: rgb(163, 55, 55);
+    }
+    .h2{
+        text-align: center;
+    }
+  </style>
+
+</head>
+<body style="background-color: plum;">
+  <div class="container-fluid">
+    <div class="col-sm-3">
+      <div class="well" style="text-align: center;">
+        <h2>WELCOME TO EMPIRE CONNECTIONS</h2>
+      </div>
+    </div>
+  <div class="container-fluid">
+    <div class="col-sm-3">
+      <div class="well" style="text-align: center;">
+      <a href="{% url 'subscription:login' %}"><button type="submit" style="text-align: center; background-color: greenyellow;">WELCOME</button></a>
+      </div>
+    </div>
+  </div>
+  </div>
+  <div class="col-sm-3">
+          <div class="well" style="text-align: center;">
+            <h4 style="text-emphasis-color: yellow;">are you new?</h4>
+            <a href="{% url 'subscription:register' %}"<button type="submit">sign-up-to-connect</button> </a>
+          </div>
+  </div>
+</body>
+</html>

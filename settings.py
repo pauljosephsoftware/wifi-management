@@ -42,7 +42,6 @@ INSTALLED_APPS = [
     'mpesa',
     'mpesa_api.core',
     'rangefilter',
-    'rest_framework',
 
 ]
 
@@ -61,7 +60,7 @@ ROOT_URLCONF = 'Tenda.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / "templates"],
+        'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -109,23 +108,16 @@ from decouple import config
 
 
 MPESA_CONFIG = {
-  'CONSUMER_KEY': '<your_client_key>',
-  'CONSUMER_SECRET': '<your_client_secret>',
-  'HOST_NAME': 'https://your-domain.com',  # must be real if in sandbox
-  'PASS_KEY': '<your_pass_key>',
-  'SAFARICOM_API': 'https://sandbox.safaricom.co.ke',
-  'SHORT_CODE': '174379',
+    'CONSUMER_KEY': config('MPESA_CONSUMER_KEY'),
+    'CONSUMER_SECRET': config('MPESA_CONSUMER_SECRET'),
+    'SHORT_CODE': config('MPESA_SHORTCODE'),
+    'PASS_KEY': config('MPESA_PASSKEY'),
+    'HOST_NAME': config('SITE_DOMAIN'),
+    'SAFARICOM_API': 'https://sandbox.safaricom.co.ke',
 }
 
 
 LOGIN_URL = '/login/'
-
-LOGIN_REDIRECT_URL = '/dashboard/'
-LOGOUT_REDIRECT_URL = '/login/'
-
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/

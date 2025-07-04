@@ -1,0 +1,26 @@
+{% load static %}
+{% load i18n %}
+
+{% block title %}Subscription Initiated{% endblock %}
+
+{% block content %}
+<section class="subscription-success">
+  <div class="container">
+    <h1>{% trans "Subscription Initiated" %}</h1>
+    <p>{% trans "We have sent an M‑Pesa STK prompt to your phone." %}</p>
+    <p>{% trans "Please enter your PIN on your device to complete the payment." %}</p>
+    
+    {% if plan %}
+      <div class="plan-summary">
+        <strong>{% trans "Plan:" %}</strong> {{ plan.name }} <br>
+        <strong>{% trans "Amount:" %}</strong> KES {{ plan.price }} <br>
+        <strong>{% trans "Phone Number:" %}</strong> {{ request.user.subscriberprofile.phone_number }}
+      </div>
+    {% endif %}
+
+    <a href="{% url 'subscription:dashboard' %}" class="btn btn-primary">
+      {% trans "Go to Dashboard" %}
+    </a>
+  </div>
+</section>
+{% endblock %}

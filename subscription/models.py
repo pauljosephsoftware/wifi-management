@@ -9,18 +9,21 @@ class ServicePlan(models.Model):
     bandwidth_limit_mb = models.IntegerField()
     device_limit = models.IntegerField()
     price = models.DecimalField(max_digits=6, decimal_places=2)
+    phone_number = models.CharField(max_length=20, blank=True)
 
     def __str__(self):
         return self.name
 
 class SubscriberProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    phone_number = models.CharField(max_length=20, blank=True)
     plan = models.ForeignKey(ServicePlan, on_delete=models.SET_NULL, null=True)
     plan_activated = models.DateTimeField(null=True, blank=True)
     plan_expires = models.DateTimeField(null=True, blank=True)
     is_active = models.BooleanField(default=False)
     mac_address = models.CharField(max_length=17, blank=True, null=True)
     ip_address = models.GenericIPAddressField(blank=True, null=True)
+    profile_pic = models.ImageField(upload_to='profile_pics/', default='profile_pics/default.jpg')
 
     def __str__(self):
         return self.user.username
