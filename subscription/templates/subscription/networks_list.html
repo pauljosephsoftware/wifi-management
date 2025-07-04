@@ -17,7 +17,7 @@
             {% csrf_token %}
             <input type="hidden" name="ssid" value="{{ net.ssid }}">
             <input name="password" placeholder="Password">
-            <button class="btn btn-sm" href="{% url 'subscription:networks' %}">Connect</button>
+            <button class="btn btn-sm" href="{% url 'subscription:available_networks' %}">Connect</button>
           </form>
         </td>
       </tr>
